@@ -270,3 +270,6 @@ class ShipListView(ListView):
         context['verifier_cities'] = VerifierCity.objects.all()
         context['selected_verifier_cities'] = self.request.GET.getlist('selected_verifier_cities')
         return context
+
+
+ 
