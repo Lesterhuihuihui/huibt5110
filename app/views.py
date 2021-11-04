@@ -249,7 +249,7 @@ class ShipListView(ListView):
             queryset = queryset.filter(ship_type__name__in=ship_type)
         if date:
             queryset = queryset.filter(date__date=date)
-        if selected_verifier_cities:
+        if all(selected_verifier_cities) and selected_verifier_cities:
             queryset = queryset.filter(verifier_city__name__in=selected_verifier_cities)
         return queryset
 
