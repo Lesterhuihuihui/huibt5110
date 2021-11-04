@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %} Ship {% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+
+    <form action="{% url 'ship' %}" method="get" class="form-inline" style="margin: 30px 0">
+        <div class="form-group">
+            <label for="ship_type">Ship type</label>
+            <select name="ship_type" id="ship_type" class="form-control" multiple>
+                <option value="" {% if not request.GET.ship_type %}selected{% endif %}>----</option>
+                {% for ship_type in ship_types %}
+                    <option value="{{ ship_type.name }}" {% if ship_type.name in select_ship_types %}selected{% endif %}>{{ ship_type.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="selected_verifier_cities">Verifier Cities</label>
+            <select name="selected_verifier_cities" id="selected_verifier_cities" class="form-control" multiple>
+                <option value="" {% if not request.GET.selected_verifier_cities %}selected{% endif %}>----</option>
+                {% for verifier_city in verifier_cities %}
+                    <option value="{{ verifier_city.name }}" {% if verifier_city.name in selected_verifier_cities %}selected{% endif %}>{{ verifier_city.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date" class="form-control" value="{{ request.GET.date }}">
+        </div>
+        <button class="btn">filter</button>
+        <a class="btn" type="button" href="{% url 'ship' %}">clear</a>
+    </form>
+</div>
+<div class="container">
+    <div id="chart1" class="col-md-12" style="height: 500px">
+
+    </div>
+</div>
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Eddi</th>
+                <th>CO2</th>
+                <th>fuel total</th>
+                <th>ship type</th>
+                <th>date</th>
+                <th>Verifier City</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <td>{{ object.eedi }}</td>
+                    <td>{{ object.total_co2 }}</td>
+                    <td>{{ object.total_fuel }}</td>
+                    <td>{{ object.ship_type.name }}</td>
+                    <td>{{ object.date.date }}</td>
+                    <td>{{ object.verifier_city.name }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+var chartDom = document.getElementById('chart1');
+var myChart = echarts.init(chartDom);
+var option;
+
+option = {
+  title: {
+    text: 'Eddi of different ships',
+    left: 'center'
+  },
+  tooltip: {
+    trigger: 'item'
+  },
+  legend: {
+    orient: 'vertical',
+    left: 'left'
+  },
+  series: [
+    {
+      name: 'Access From',
+      type: 'pie',
+      radius: '50%',
+      data: {{ d|safe }},
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }
+    }
+  ]
+};
+
+option && myChart.setOption(option);
+
+</script>
+
+{% endblock %}
